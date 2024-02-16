@@ -1,0 +1,34 @@
+apiVersion: v1 # Kubernetes API version
+kind: Service # Kubernetes resource kind we are creating
+metadata: # Metadata of the resource kind we are creating
+  name: springboot-docker-demo
+spec:
+  selector:
+    app: springboot-docker-demo
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9090
+      targetPort: 9090
+  type: NodePort # type of the service. LoadBalancer indicates that our service will be external.
+---
+apiVersion: apps/v1
+kind: Deployment # Kubernetes resource kind we are creating
+metadata:
+  name: springboot-docker-demo
+spec:
+  selector:
+    matchLabels:
+      app: springboot-docker-demo
+  replicas: 2 # Number of replicas that will be created for this deployment
+  template:
+    metadata:
+      labels:
+        app: springboot-docker-demo
+    spec:
+      containers:
+        - name: springboot-docker-demo
+          image: kishorkumarkk/ekspoc:springboot2 # Image that will be used to containers in the cluster
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9090
